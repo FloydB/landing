@@ -1,24 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-  <title>&#8203;</title>
-
-
-  <style>
-    html, body {
-      background-color: #161616;
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <title>floyd</title>
+<style>
+    body {
+        margin: 0;
+        height: 200vh;
+        background-color: #250000;
     }
 
-
-
-  </style>
+    #fixed-image {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1);
+        width: 100px;
+        height: auto;
+        pointer-events: none;
+    }
+</style>
 </head>
 <body>
 
+<img src="image.png" id="fixed-image">
+
+<script>
+function updateScale() {
+    // Detect zoom level
+    let zoom = window.devicePixelRatio || 1;
+    // Apply inverse scale to keep image same size
+    document.getElementById('fixed-image').style.transform =
+        `translate(-50%, -50%) scale(${1/zoom})`;
+}
+
+// Update on load and on resize (some browsers trigger zoom on resize)
+window.addEventListener('resize', updateScale);
+window.addEventListener('load', updateScale);
+</script>
 
 </body>
 </html>
