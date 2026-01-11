@@ -2,42 +2,71 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Disable mobile zoom only -->
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-  <title>floyd.id</title>
+<title>floyd.id</title>
+
 <style>
-    body {
+    html, body {
         margin: 0;
+        width: 100%;
+        height: 100%;
         background-color: #250000;
+        overflow: hidden;
+        touch-action: manipulation;
     }
 
     #fixed-image {
         position: fixed;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%) scale(1);
         width: 100px;
         height: auto;
+        transform-origin: center center;
         pointer-events: none;
+        will-change: transform;
     }
 </style>
 </head>
 <body>
 
-<img src="image.png" id="fixed-image">
+<img src="image.png" id="fixed-image" alt="">
 
 <script>
-function updateScale() {
-    // Detect zoom level
-    let zoom = window.devicePixelRatio || 1;
-    // Apply inverse scale to keep image same size
-    document.getElementById('fixed-image').style.transform =
-        `translate(-50%, -50%) scale(${1/zoom})`;
-}
+(function () {
+    const img = document.getElementById('fixed-image');
 
-// Update on load and on resize (some browsers trigger zoom on resize)
-window.addEventListener('resize', updateScale);
-window.addEventListener('load', updateScale);
+    function updateScale() {
+        let scale = 1;
+
+        if (window.visualViewport && /Mobi|Android/i.test(navigator.userAgent)) {
+            // Mobile pinch zoom
+            scale = 1 / window.visualViewport.scale;
+        } else {
+            // Desktop browser zoom
+            scale = 1 / (window.devicePixelRatio || 1);
+        }
+
+        img.style.transform =
+            `translate(-50%, -50%) scale(${scale})`;
+    }
+
+    updateScale();
+
+    window.addEventListener('resize', updateScale);
+
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', updateScale);
+        window.visualViewport.addEventListener('scroll', updateScale);
+    }
+})();
 </script>
 
 </body>
